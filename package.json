@@ -1,0 +1,47 @@
+{
+  "name": "fastmcp",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "packageManager": "pnpm@10.10.0",
+  "type": "module",
+  "scripts": {
+    "dev": "yarn langgraph:in_mem:up",
+    "build": "tsc",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "langgraph:in_mem:up": "npx @langchain/langgraph-cli dev --port 8888"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@langchain/anthropic": "^0.3.20",
+    "@langchain/community": "^0.3.42",
+    "@langchain/core": "^0.3.55",
+    "@langchain/langgraph": "^0.2.71",
+    "@langchain/openai": "^0.5.10",
+    "fastmcp": "^1.27.6",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.26.0",
+    "@tsconfig/recommended": "^1.0.8",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.15.17",
+    "@typescript-eslint/eslint-plugin": "^8.32.0",
+    "@typescript-eslint/parser": "^8.32.0",
+    "dotenv": "^16.5.0",
+    "eslint": "^9.26.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-no-instanceof": "^1.0.1",
+    "eslint-plugin-prettier": "^5.4.0",
+    "jest": "^29.7.0",
+    "prettier": "^3.5.3",
+    "ts-jest": "^29.3.2",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}

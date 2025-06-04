@@ -1,0 +1,104 @@
+---
+description: 
+globs: **/*.ts,src/**/*.tsx,src/**/*.ts
+alwaysApply: false
+---
+# TypeScript Best Practices
+
+## Use TypeScript for all code.
+
+## Type System
+- Prefer `type` keyword over `interface` keyword for object definitions
+- Use type for unions, intersections, and mapped types
+- Avoid enums; use maps instead.
+- Avoid using `any`, prefer `unknown` for unknown types
+- Use strict TypeScript configuration
+- Leverage TypeScript's built-in utility types
+- Use generics for reusable type patterns
+
+## Naming Conventions
+- Use PascalCase for classes, type names and interfaces
+- Use camelCase for variables and functions
+- Use kebab-case for file and directory names
+- Use UPPER_CASE for constants
+- Use descriptive names with auxiliary verbs (e.g., isLoading, hasError)
+- Prefix types/interfaces for React props with 'Props' (e.g., ButtonProps)
+- Use complete words instead of abbreviations and correct spelling.
+  - Except for standard abbreviations like API, URL, etc.
+  - Except for well-known abbreviations:
+    - err for errors
+    - ctx for contexts
+    - req, res, next for middleware function parameters
+
+## Code Organization
+- Keep type definitions close to where they're used
+- Export types and interfaces from dedicated type files when shared
+- Use barrel exports (index.ts) for organizing exports
+- Place shared types in a `types` directory
+- Co-locate component props with their components
+
+## Functions
+- Name functions with a verb and something else.
+  - If it returns a boolean, use isX or hasX, canX, etc.
+  - If it doesn't return anything, use executeX or saveX, etc.
+- Avoid nesting blocks by:
+  - Early checks and returns.
+  - Extraction to utility functions.
+- Use higher-order functions (map, filter, reduce, etc.) to avoid function nesting.
+- Use default parameter values instead of checking for null or undefined when necessary.
+- Use explicit return types for public functions
+- Use `function` keyword for pure functions
+- Use arrow functions for callbacks
+- Implement proper error handling with custom error types
+- Use function overloads for complex type scenarios
+- Prefer async/await over Promises
+- Reduce function parameters using RO-RO
+  - Use an object to pass multiple parameters.
+  - Use an object to return results.
+  - Declare necessary types for input arguments and output.
+- Use a single level of abstraction.
+
+## Classes
+- Follow SOLID principles.
+- Prefer composition over inheritance.
+- Declare interfaces to define contracts.
+- implement internal data validation in the classes
+- Write small classes with a single purpose.
+  - Less than 200 instructions.
+  - Less than 10 public methods.
+  - Less than 10 properties.
+
+## Best Practices
+- Enable strict mode in tsconfig.json
+- Prefer immutability for data.
+  - Use readonly for data that doesn't change.
+  - Use `as const` for literals that don't change.
+- Leverage discriminated unions for type safety
+- Use type guards for runtime type checking
+- Implement proper null checking
+- Avoid type assertions unless necessary
+- Avoid magic numbers and define constants
+
+## Error Handling
+- Create custom error types for domain-specific errors
+- Use Result types for operations that can fail
+- Implement proper error boundaries
+- Use try-catch blocks with typed catch clauses
+- Handle Promise rejections properly
+
+## Patterns
+- Use the Builder pattern for complex object creation
+- Implement the Repository pattern for data access
+- Use the Factory pattern for object creation
+- Leverage dependency injection
+- Use the Module pattern for encapsulation 
+
+### Testing
+- Follow the Arrange-Act-Assert convention for tests.
+- Name test variables clearly.
+  - Follow the convention: inputX, mockX, actualX, expectedX, etc.
+- Write unit tests for each public function.
+  - Use test doubles to simulate dependencies.
+    - Except for third-party dependencies that are not expensive to execute.
+- Write acceptance tests for each module.
+  - Follow the Given-When-Then convention.

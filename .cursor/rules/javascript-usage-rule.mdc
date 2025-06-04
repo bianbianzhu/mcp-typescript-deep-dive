@@ -1,0 +1,16 @@
+---
+description: 
+globs: **/*.js,**/*.ts,src/**/*.tsx,src/**/*.ts
+alwaysApply: false
+---
+# JavaScript Usage Rule
+
+- Use modern JavaScript (ES6+) features such as `let`, `const`, arrow functions, and template literals.
+- Prefer functional programming patterns where possible.
+- Avoid using `var`; use `let` or `const` instead.
+- Use single quotes for strings, except when interpolation is needed (then use template literals).
+- Always use semicolons at the end of statements.
+- Organize code into modules using ES6 `import` and `export` syntax.
+- Add JSDoc comments for all exported functions and classes.
+- Prefer array methods like `map`, `filter`, and `reduce` over traditional loops when appropriate.
+- Avoid using global variables; encapsulate logic within modules or functions.

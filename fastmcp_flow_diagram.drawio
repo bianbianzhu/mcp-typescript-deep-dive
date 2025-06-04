@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2023-12-19T18:17:44.529Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" version="22.1.11" etag="5ueQnw1ZMchqA3OA9L9L" type="device">
+  <diagram name="FastMCP Flow" id="mermaid-4pf9ksbu9kg">
+    <mxGraphModel dx="1904" dy="1015" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1904" pageHeight="1015" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Client Interaction Subgraph/Cluster -->
+        <mxCell id="subGraph1" value="Client Interaction" style="swimlane;whiteSpace=wrap;html=1;startSize=23;fillColor=#161616;strokeColor=#222222;fontColor=#FFFFFF;" parent="1" vertex="1">
+          <mxGeometry x="8" y="8" width="1508.92" height="999" as="geometry" />
+        </mxCell>
+        
+        <!-- Tool Registration Subgraph/Cluster -->
+        <mxCell id="subGraph0" value="Tool Registration" style="swimlane;whiteSpace=wrap;html=1;startSize=23;fillColor=#161616;strokeColor=#222222;fontColor=#FFFFFF;" parent="1" vertex="1">
+          <mxGeometry x="1566.92" y="314" width="330" height="387" as="geometry" />
+        </mxCell>
+        
+        <!-- Nodes in Tool Registration section -->
+        <mxCell id="ServerCreation" value="Create FastMCP Server Instance" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#222222;fontColor=#FFFFFF;" parent="subGraph0" vertex="1">
+          <mxGeometry x="35" y="45.5" width="260" height="54" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="AddTool" value="server.addTool(...)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#222222;fontColor=#FFFFFF;" parent="subGraph0" vertex="1">
+          <mxGeometry x="69.22" y="174.5" width="191.56" height="54" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="ToolsArray" value="Tools stored in server" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#222222;fontColor=#FFFFFF;" parent="subGraph0" vertex="1">
+          <mxGeometry x="57.31" y="303.5" width="215.38" height="54" as="geometry" />
+        </mxCell>
+        
+        <!-- Edges in Tool Registration section -->
+        <mxCell id="L_ServerCreation_AddTool_0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;curved=1;strokeColor=#666666;" parent="subGraph0" source="ServerCreation" target="AddTool" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="L_AddTool_ToolsArray_0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;curved=1;strokeColor=#666666;" parent="subGraph0" source="AddTool" target="ToolsArray" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- Nodes in Client Interaction section -->
+        <mxCell id="ClientRequest" value="Client calls tool" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#222222;fontColor=#FFFFFF;" parent="subGraph1" vertex="1">
+          <mxGeometry x="812.76" y="64.5" width="170.33" height="54" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="ServerReceives" value="Server receives request" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#222222;fontColor=#FFFFFF;" parent="subGraph1" vertex="1">
+          <mxGeometry x="782.33" y="217.5" width="231.17" height="54" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="FindTool" value="Find tool by name" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#222222;fontColor=#FFFFFF;" parent="subGraph1" vertex="1">
+          <mxGeometry x="811.65" y="346.5" width="188.54" height="54" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="ValidateParams" value="Validate parameters" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#222222;fontColor=#FFFFFF;" parent="subGraph1" vertex="1">
+          <mxGeometry x="650.62" y="499.5" width="204.61" height="54" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="MethodNotFound" value="Return MethodNotFound error" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#222222;fontColor=#FFFFFF;" parent="subGraph1" vertex="1">
+          <mxGeometry x="1221.92" y="805.5" width="260" height="54" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="ExecuteTool" value="Execute tool function" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#222222;fontColor=#FFFFFF;" parent="subGraph1" vertex="1">
+          <mxGeometry x="353.42" y="652.5" width="213.01" height="54" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="InvalidParams" value="Return InvalidParams error" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#222222;fontColor=#FFFFFF;" parent="subGraph1" vertex="1">
+          <mxGeometry x="919.93" y="805.5" width="251.99" height="54" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="FormatResult" value="Format result as content" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#222222;fontColor=#FFFFFF;" parent="subGraph1" vertex="1">
+          <mxGeometry x="43" y="805.5" width="236.92" height="54" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="UserErrorResult" value="Format user error as content" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#222222;fontColor=#FFFFFF;" parent="subGraph1" vertex="1">
+          <mxGeometry x="329.92" y="805.5" width="260" height="54" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="InternalError" value="Format as internal error" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#222222;fontColor=#FFFFFF;" parent="subGraph1" vertex="1">
+          <mxGeometry x="639.92" y="805.5" width="230.01" height="54" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="SendResponse" value="Send response to client" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#222222;fontColor=#FFFFFF;" parent="subGraph1" vertex="1">
+          <mxGeometry x="639.6" y="934.5" width="230.65" height="54" as="geometry" />
+        </mxCell>
+        
+        <!-- Edges in Client Interaction section -->
+        <mxCell id="L_ClientRequest_ServerReceives_0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;curved=1;strokeColor=#666666;" parent="subGraph1" source="ClientRequest" target="ServerReceives" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Label_ClientRequest_ServerReceives_0" value="transport layer" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#FFFFFF;labelBackgroundColor=#161616;" parent="L_ClientRequest_ServerReceives_0" vertex="1" connectable="0">
+          <mxGeometry x="-0.1465" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="L_ServerReceives_FindTool_0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;curved=1;strokeColor=#666666;" parent="subGraph1" source="ServerReceives" target="FindTool" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="L_FindTool_ValidateParams_0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;curved=1;strokeColor=#666666;" parent="subGraph1" source="FindTool" target="ValidateParams" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Label_FindTool_ValidateParams_0" value="tool exists" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#FFFFFF;labelBackgroundColor=#161616;" parent="L_FindTool_ValidateParams_0" vertex="1" connectable="0">
+          <mxGeometry x="0.2" y="1" relative="1" as="geometry">
+            <mxPoint x="13" y="-28" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="L_FindTool_MethodNotFound_0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;curved=1;strokeColor=#666666;" parent="subGraph1" source="FindTool" target="MethodNotFound" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1351.92" y="373.5"/>
+              <mxPoint x="1351.92" y="584"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Label_FindTool_MethodNotFound_0" value="tool not found" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#FFFFFF;labelBackgroundColor=#161616;" parent="L_FindTool_MethodNotFound_0" vertex="1" connectable="0">
+          <mxGeometry x="0.45" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="L_ValidateParams_ExecuteTool_0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;curved=1;strokeColor=#666666;" parent="subGraph1" source="ValidateParams" target="ExecuteTool" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Label_ValidateParams_ExecuteTool_0" value="valid" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#FFFFFF;labelBackgroundColor=#161616;" parent="L_ValidateParams_ExecuteTool_0" vertex="1" connectable="0">
+          <mxGeometry x="0.45" y="1" relative="1" as="geometry">
+            <mxPoint x="43" y="-22" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="L_ValidateParams_InvalidParams_0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;curved=1;strokeColor=#666666;" parent="subGraph1" source="ValidateParams" target="InvalidParams" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1045.93" y="553.5"/>
+              <mxPoint x="1045.93" y="660.5"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Label_ValidateParams_InvalidParams_0" value="invalid" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#FFFFFF;labelBackgroundColor=#161616;" parent="L_ValidateParams_InvalidParams_0" vertex="1" connectable="0">
+          <mxGeometry x="0.3" y="1" relative="1" as="geometry">
+            <mxPoint x="-13" y="38" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="L_ExecuteTool_FormatResult_0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;curved=1;strokeColor=#666666;" parent="subGraph1" source="ExecuteTool" target="FormatResult" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Label_ExecuteTool_FormatResult_0" value="success" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#FFFFFF;labelBackgroundColor=#161616;" parent="L_ExecuteTool_FormatResult_0" vertex="1" connectable="0">
+          <mxGeometry x="0.45" y="1" relative="1" as="geometry">
+            <mxPoint x="36" y="-9" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="L_ExecuteTool_UserErrorResult_0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;curved=1;strokeColor=#666666;" parent="subGraph1" source="ExecuteTool" target="UserErrorResult" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Label_ExecuteTool_UserErrorResult_0" value="UserError" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#FFFFFF;labelBackgroundColor=#161616;" parent="L_ExecuteTool_UserErrorResult_0" vertex="1" connectable="0">
+          <mxGeometry x="0.2" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="L_ExecuteTool_InternalError_0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;curved=1;strokeColor=#666666;" parent="subGraph1" source="ExecuteTool" target="InternalError" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Label_ExecuteTool_InternalError_0" value="other error" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#FFFFFF;labelBackgroundColor=#161616;" parent="L_ExecuteTool_InternalError_0" vertex="1" connectable="0">
+          <mxGeometry x="0.2" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="L_FormatResult_SendResponse_0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=1;strokeColor=#666666;" parent="subGraph1" source="FormatResult" target="SendResponse" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="161.46" y="880.5"/>
+              <mxPoint x="320" y="880.5"/>
+              <mxPoint x="320" y="961.5"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="L_UserErrorResult_SendResponse_0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;curved=1;strokeColor=#666666;" parent="subGraph1" source="UserErrorResult" target="SendResponse" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="459.92" y="880.5"/>
+              <mxPoint x="520" y="880.5"/>
+              <mxPoint x="520" y="920"/>
+              <mxPoint x="697.26" y="920"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="L_InternalError_SendResponse_0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;curved=1;strokeColor=#666666;" parent="subGraph1" source="InternalError" target="SendResponse" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="L_InvalidParams_SendResponse_0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;curved=1;strokeColor=#666666;" parent="subGraph1" source="InvalidParams" target="SendResponse" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1045.93" y="880.5"/>
+              <mxPoint x="990" y="880.5"/>
+              <mxPoint x="990" y="920"/>
+              <mxPoint x="812.6" y="920"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="L_MethodNotFound_SendResponse_0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;curved=1;strokeColor=#666666;" parent="subGraph1" source="MethodNotFound" target="SendResponse" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1351.92" y="880.5"/>
+              <mxPoint x="1190" y="880.5"/>
+              <mxPoint x="1190" y="961.5"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile> 

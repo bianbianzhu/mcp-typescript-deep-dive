@@ -1,5 +1,11 @@
 import "dotenv/config";
-import { FastMCP, imageContent, audioContent, UserError } from "fastmcp";
+import {
+  FastMCP,
+  imageContent,
+  audioContent,
+  UserError,
+  Progress,
+} from "fastmcp";
 import { z } from "zod";
 import { existsSync } from "fs";
 import { readFile } from "fs/promises";
@@ -209,34 +215,39 @@ server.addTool({
   execute: async (args, { reportProgress }) => {
     const { url } = args;
 
-    reportProgress({
-      progress: 0,
-      total: 100,
-    });
+    async function flushProgress(process: Progress) {
+      await reportProgress(process);
+      await new Promise((resolve) => setImmediate(resolve));
+    }
 
     try {
-      await sleep(1000); // mock downloading time
-
-      reportProgress({
-        progress: 50,
+      await flushProgress({
+        progress: 0,
         total: 100,
       });
 
       await sleep(1000); // mock downloading time
 
-      reportProgress({
+      await flushProgress({
+        progress: 55,
+        total: 100,
+      });
+
+      await sleep(1000); // mock downloading time
+
+      await flushProgress({
         progress: 90,
         total: 100,
       });
 
-      await sleep(200); // mock the internet connection ping time
+      await sleep(1000); // mock the internet connection ping time
 
-      reportProgress({
+      await flushProgress({
         progress: 100,
         total: 100,
       });
 
-      await sleep(0); // to make sure progress 100 is shown
+      // await sleep(0); // NOT LONGER NEEDED: to make sure progress 100 is shown
 
       return {
         content: [
@@ -512,6 +523,6 @@ server.addTool({
 })();
 
 // sleep function accepts a number of milliseconds and returns a promise that resolves after the given times
-function sleep(ms: number) {
+function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }

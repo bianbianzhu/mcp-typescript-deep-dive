@@ -12,7 +12,8 @@
     "langgraph:in_mem:up": "npx @langchain/langgraph-cli dev --port 8888",
     "test": "jest",
     "mcp:inspect": "npx fastmcp inspect src/index.ts",
-    "mcp:dev": "tsx src/index.ts"
+    "mcp:dev": "tsx src/index.ts",
+    "nuke": "rm -rf node_modules"
   },
   "keywords": [],
   "author": "",

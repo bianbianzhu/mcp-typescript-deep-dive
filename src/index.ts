@@ -1,11 +1,5 @@
 import "dotenv/config";
-import {
-  FastMCP,
-  imageContent,
-  audioContent,
-  UserError,
-  Progress,
-} from "fastmcp";
+import { FastMCP, imageContent, audioContent, UserError } from "fastmcp";
 import { z } from "zod";
 import { existsSync } from "fs";
 import { readFile } from "fs/promises";
@@ -215,34 +209,29 @@ server.addTool({
   execute: async (args, { reportProgress }) => {
     const { url } = args;
 
-    async function flushProgress(process: Progress) {
-      await reportProgress(process);
-      await new Promise((resolve) => setImmediate(resolve));
-    }
-
     try {
-      await flushProgress({
+      await reportProgress({
         progress: 0,
         total: 100,
       });
 
       await sleep(1000); // mock downloading time
 
-      await flushProgress({
+      await reportProgress({
         progress: 55,
         total: 100,
       });
 
       await sleep(1000); // mock downloading time
 
-      await flushProgress({
+      await reportProgress({
         progress: 90,
         total: 100,
       });
 
       await sleep(1000); // mock the internet connection ping time
 
-      await flushProgress({
+      await reportProgress({
         progress: 100,
         total: 100,
       });

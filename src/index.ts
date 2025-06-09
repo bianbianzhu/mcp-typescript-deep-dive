@@ -23,7 +23,7 @@ const server = new FastMCP({
 
     const token = authHeader.substring(7);
 
-    if (token !== "1234567890") {
+    if (token !== "1234567890" && token !== "abc") {
       throw new Response(null, {
         status: 401,
         statusText: "Unauthorized",
@@ -31,7 +31,7 @@ const server = new FastMCP({
     }
 
     return {
-      id: crypto.randomUUID(),
+      id: token === "1234567890" ? crypto.randomUUID() : "abc",
     };
   },
 });
@@ -479,6 +479,33 @@ server.addTool({
       // And return a sanitized error to the user
       throw new UserError("An error occurred while reading the file");
     }
+  },
+});
+
+server.addTool({
+  name: "get_process_info",
+  description:
+    "Get fundamental process information - good to test STDIO: Each npx tsx src/index.ts creates a separate process (server) with exactly 1 session",
+  execute: async (_args, _context) => {
+    const processId = process.pid;
+    const sessionCount = server.sessions.length; // sessions are created when a new connection is established
+    const uptime = process.uptime();
+    const memoryUsage = process.memoryUsage();
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: `🔍 PROCESS INFO:
+Process ID (PID): ${processId}
+Total Sessions: ${sessionCount}
+Uptime: ${uptime.toFixed(2)}s
+Memory RSS: ${(memoryUsage.rss / 1024 / 1024).toFixed(2)}MB
+Started at: ${new Date().toISOString()}`,
+        },
+      ],
+      isError: false,
+    };
   },
 });
 

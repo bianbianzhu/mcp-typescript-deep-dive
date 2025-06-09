@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+仔细分析图片, 使用draw.io的XML格式完美复刻该图, 保证格式正确。注意! 不要在字符串中使用未转义的&, <, > 等符号。 确保生成的XML的第一行是
+```
+<?xml version="1.0" encoding="UTF-8"?>
+```
+优先使用 Curved Edges(在edge的xml tag中, 使用curved=1 这个attribute)
+
+且将生成的xml文件放在文件夹`diagrams`下面

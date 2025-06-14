@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2025-06-11T12:00:00.000Z" agent="5.0" etag="xxx" version="21.0.0" type="device">
+  <diagram name="Page-1" id="13e1069c-82ec-6db2-03f1-153e76fe0fe0">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Participants -->
+        <mxCell id="caller" value="Caller" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;rounded=1;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;fontFamily=Verdana;fontSize=12;align=center;" vertex="1" parent="1">
+          <mxGeometry x="100" y="80" width="100" height="600" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="promise" value="Promise" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;rounded=1;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;fontFamily=Verdana;fontSize=12;align=center;" vertex="1" parent="1">
+          <mxGeometry x="300" y="80" width="100" height="600" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="timer" value="Timer" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;rounded=1;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;fontFamily=Verdana;fontSize=12;align=center;" vertex="1" parent="1">
+          <mxGeometry x="500" y="80" width="100" height="600" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="eventemitter" value="EventEmitter" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;rounded=1;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;fontFamily=Verdana;fontSize=12;align=center;" vertex="1" parent="1">
+          <mxGeometry x="700" y="80" width="100" height="600" as="geometry" />
+        </mxCell>
+        
+        <!-- Initial calls -->
+        <mxCell id="call1" value="Call function" style="html=1;verticalAlign=bottom;endArrow=block;entryX=0;entryY=0;labelBackgroundColor=none;fontFamily=Verdana;fontSize=11;curved=1;" edge="1" parent="1" source="caller" target="promise">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="175" y="160" as="sourcePoint" />
+            <mxPoint x="335" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="call2" value="setTimeout(5000ms)" style="html=1;verticalAlign=bottom;endArrow=block;entryX=0;entryY=0;labelBackgroundColor=none;fontFamily=Verdana;fontSize=11;curved=1;" edge="1" parent="1" source="promise" target="timer">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="375" y="200" as="sourcePoint" />
+            <mxPoint x="535" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="call3" value="Listen for 'ready' event" style="html=1;verticalAlign=bottom;endArrow=block;entryX=0;entryY=0;labelBackgroundColor=none;fontFamily=Verdana;fontSize=11;curved=1;" edge="1" parent="1" source="promise" target="eventemitter">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="375" y="240" as="sourcePoint" />
+            <mxPoint x="735" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="call4" value="Listen for 'error' event" style="html=1;verticalAlign=bottom;endArrow=block;entryX=0;entryY=0;labelBackgroundColor=none;fontFamily=Verdana;fontSize=11;curved=1;" edge="1" parent="1" source="promise" target="eventemitter">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="375" y="280" as="sourcePoint" />
+            <mxPoint x="735" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Alt frame -->
+        <mxCell id="altframe" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;recursiveResize=0;container=1;collapsible=0;width=80;height=30;" vertex="1" parent="1">
+          <mxGeometry x="80" y="320" width="740" height="320" as="geometry" />
+        </mxCell>
+        
+        <!-- Ready event scenario -->
+        <mxCell id="readylabel" value="[Ready event fires first]" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=Verdana;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="360" width="150" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="ready1" value="Emit 'ready'" style="html=1;verticalAlign=bottom;endArrow=block;entryX=1;entryY=0;labelBackgroundColor=none;fontFamily=Verdana;fontSize=11;curved=1;" edge="1" parent="1" source="eventemitter" target="promise">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="735" y="380" as="sourcePoint" />
+            <mxPoint x="375" y="380" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="ready2" value="clearTimeout()" style="html=1;verticalAlign=bottom;endArrow=block;entryX=0;entryY=0;labelBackgroundColor=none;fontFamily=Verdana;fontSize=11;curved=1;" edge="1" parent="1" source="promise" target="timer">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="375" y="400" as="sourcePoint" />
+            <mxPoint x="535" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="ready3" value="resolve()" style="html=1;verticalAlign=bottom;endArrow=block;entryX=1;entryY=0;labelBackgroundColor=none;fontFamily=Verdana;fontSize=11;curved=1;" edge="1" parent="1" source="promise" target="caller">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="335" y="420" as="sourcePoint" />
+            <mxPoint x="175" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Divider line -->
+        <mxCell id="divider1" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=#000000;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="440" width="720" height="8" as="geometry" />
+        </mxCell>
+        
+        <!-- Error event scenario -->
+        <mxCell id="errorlabel" value="[Error event fires first]" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=Verdana;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="450" width="150" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="error1" value="Emit 'error'" style="html=1;verticalAlign=bottom;endArrow=block;entryX=1;entryY=0;labelBackgroundColor=none;fontFamily=Verdana;fontSize=11;curved=1;" edge="1" parent="1" source="eventemitter" target="promise">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="735" y="470" as="sourcePoint" />
+            <mxPoint x="375" y="470" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="error2" value="clearTimeout()" style="html=1;verticalAlign=bottom;endArrow=block;entryX=0;entryY=0;labelBackgroundColor=none;fontFamily=Verdana;fontSize=11;curved=1;" edge="1" parent="1" source="promise" target="timer">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="375" y="490" as="sourcePoint" />
+            <mxPoint x="535" y="490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="error3" value="reject(error)" style="html=1;verticalAlign=bottom;endArrow=block;entryX=1;entryY=0;labelBackgroundColor=none;fontFamily=Verdana;fontSize=11;curved=1;" edge="1" parent="1" source="promise" target="caller">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="335" y="510" as="sourcePoint" />
+            <mxPoint x="175" y="510" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Divider line -->
+        <mxCell id="divider2" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=#000000;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="530" width="720" height="8" as="geometry" />
+        </mxCell>
+        
+        <!-- Timeout scenario -->
+        <mxCell id="timeoutlabel" value="[Timeout occurs first]" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontFamily=Verdana;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="540" width="150" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="timeout1" value="Timeout callback" style="html=1;verticalAlign=bottom;endArrow=block;entryX=0;entryY=0;labelBackgroundColor=none;fontFamily=Verdana;fontSize=11;curved=1;" edge="1" parent="1" source="timer" target="promise">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="535" y="560" as="sourcePoint" />
+            <mxPoint x="375" y="560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="timeout2" value="reject(timeout error)" style="html=1;verticalAlign=bottom;endArrow=block;entryX=1;entryY=0;labelBackgroundColor=none;fontFamily=Verdana;fontSize=11;curved=1;" edge="1" parent="1" source="promise" target="caller">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="335" y="580" as="sourcePoint" />
+            <mxPoint x="175" y="580" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

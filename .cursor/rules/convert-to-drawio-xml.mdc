@@ -9,4 +9,4 @@ alwaysApply: false
 ```
 优先使用 Curved Edges(在edge的xml tag中, 使用curved=1 这个attribute)
 
-且将生成的xml文件放在文件夹`diagrams`下面
+且将生成的xml文件放在文件夹`diagrams`下面. 如果没有这个文件夹, 则创建这个文件夹.

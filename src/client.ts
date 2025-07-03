@@ -22,6 +22,7 @@ class MCPClient {
   async connectToServer(serverUrl: string) {
     const url = new URL(serverUrl);
     try {
+      // uuid for the transport will be auto generated
       this.#transport = new StreamableHTTPClientTransport(url, {
         requestInit: {
           headers: {
@@ -30,7 +31,9 @@ class MCPClient {
         },
       });
       await this.#client.connect(this.#transport);
-      console.log("Connected to server");
+      console.log(
+        `Connected to server via transport: ${this.#transport.sessionId}`
+      );
 
       this.setUpTransport();
     } catch (e) {
@@ -70,17 +73,22 @@ class MCPClient {
 }
 
 async function main() {
-  const client = new MCPClient();
+  const client1 = new MCPClient();
+  const client2 = new MCPClient();
 
   try {
-    await client.connectToServer("http://localhost:8080/mcp");
+    await client1.connectToServer("http://localhost:8080/mcp");
+    await client2.connectToServer("http://localhost:8080/mcp");
 
-    const result = await client.client.listTools();
-    console.log(result);
+    const result1 = await client1.client.listTools();
+    console.log(result1);
+
+    const result2 = await client2.client.listTools();
+    console.log(result2);
 
     // await client.waitForCompletion();
   } finally {
-    await client.cleanup();
+    await client1.cleanup();
   }
 }
 

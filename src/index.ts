@@ -8,7 +8,7 @@ const server = new FastMCP({
   name: "test-server",
   version: "0.0.1",
   authenticate: async (request) => {
-    const authHeader = request.headers["authorization"];
+    const authHeader = request.headers["x-api-key"];
 
     if (
       !authHeader ||
@@ -530,6 +530,7 @@ Started at: ${new Date().toISOString()}`,
       transportType: "httpStream",
       httpStream: {
         port: 8080,
+        // endpoint: "/api/mcp",
       },
     });
   } catch (error) {

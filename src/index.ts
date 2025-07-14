@@ -36,6 +36,18 @@ const server = new FastMCP({
   },
 });
 
+server.addTool({
+  name: "add",
+  description: "Add two numbers",
+  parameters: z.object({
+    a: z.number().int().describe("The first number to add"),
+    b: z.number().int().describe("The second number to add"),
+  }),
+  execute: async (args) => {
+    return String(args.a + args.b);
+  },
+});
+
 // Simple tool with parameters defined in zod
 server.addTool({
   name: "calculate_bmi", // Tool Name

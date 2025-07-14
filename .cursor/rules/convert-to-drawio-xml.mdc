@@ -3,10 +3,24 @@ description:
 globs: 
 alwaysApply: false
 ---
-仔细分析图片, 使用draw.io的XML格式完美复刻该图, 保证格式正确。注意! 不要在字符串中使用未转义的&, <, > 等符号。 确保生成的XML的第一行是
-```
-<?xml version="1.0" encoding="UTF-8"?>
-```
-优先使用 Curved Edges(在edge的xml tag中, 使用curved=1 这个attribute)
+Essential rules for creating drawio XML diagrams:
+仔细分析图片, 使用draw.io的XML格式完美复刻该图, 保证格式正确。
 
-且将生成的xml文件放在文件夹`diagrams`下面. 如果没有这个文件夹, 则创建这个文件夹.
+1. **注意! 不要在字符串中使用未转义的&, <, > 等符号**。 
+    确保生成的XML的第一行是
+    ```
+    <?xml version="1.0" encoding="UTF-8"?>
+    ```
+    优先使用 Curved Edges(在edge的xml tag中, 使用curved=1 这个attribute)
+
+2. **Separated edge labels from edge definitions:** 
+    * Instead of nesting <mxCell> elements for labels inside edge cells, create separate label cells with unique IDs (like label4, label7, etc.)
+
+    * Used parent attribute correctly: Each label cell should have `parent="edge_id"` to associate it with the correct edge.
+
+    * Removed nested <mxCell> structures: The problematic nested structure will cause the recursion issue.
+
+**Noted:**
+    In draw.io XML format, edge labels should be separate cells, not nested within the edge cell. Otherwise, causing `"Maximum call stack size exceeded"` error.
+
+且将生成的xml文件放在文件夹(folder)`diagrams`下面. 如果没有这个文件夹, 则创建这个文件夹.

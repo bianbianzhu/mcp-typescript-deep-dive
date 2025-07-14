@@ -136,5 +136,8 @@ Here are the essential rules for creating Mermaid diagrams that render well in G
 
     *   **Always carefully review edits** made to Mermaid blocks by automated tools. If errors persist or the diagram doesn't render as expected, manual correction might be necessary.
 
+10. **Avoid Reserved Symbols Inside Node Labels**
+    *  using `()` or `||` inside the `[]` (process nodes) or `{}` (subroutine nodes) will cause a syntax error and should be avoided.
+
 
 **In short:** Write standard, clearly quoted Mermaid syntax using common diagram types. For mindmaps in GitHub, use only the basic indentation structure (no icons). Prefer `graph TD`. Avoid trying to control the theme/colors yourself. Use the GitHub preview, and double-check automated edits to Mermaid blocks.

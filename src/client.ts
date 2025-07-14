@@ -1,6 +1,7 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { URL } from "url";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 
 // Protocol client that maintain 1:1 connection with servers
 class MCPClient {
@@ -9,40 +10,69 @@ class MCPClient {
   }
 
   #client: Client;
-  #transport: StreamableHTTPClientTransport | null = null;
+  #transportType: "stdio" | "httpStream";
+  #transport: StreamableHTTPClientTransport | StdioClientTransport | null =
+    null;
   #isCompleted: boolean = false;
 
-  constructor() {
+  constructor({ transportType }: { transportType: "stdio" | "httpStream" }) {
     this.#client = new Client({
       name: `mcp-client`,
       version: "1.0.0",
     });
+    this.#transportType = transportType;
   }
 
-  async connectToServer(serverUrl: string) {
-    const url = new URL(serverUrl);
-    try {
-      // uuid for the transport will be auto generated
-      this.#transport = new StreamableHTTPClientTransport(url, {
-        requestInit: {
-          headers: {
-            Authorization: `Bearer 1234567890`,
+  async connectToServer(serverUrl?: string) {
+    if (this.#transportType === "httpStream") {
+      if (!serverUrl) {
+        throw new Error("serverUrl is required for httpStream transport");
+      }
+      const url = new URL(serverUrl);
+      try {
+        // uuid for the transport will be auto generated
+        this.#transport = new StreamableHTTPClientTransport(url, {
+          requestInit: {
+            headers: {
+              ["x-api-key"]: `Bearer 1234567890`,
+            },
           },
-        },
-      });
-      await this.#client.connect(this.#transport);
-      console.log(
-        `Connected to server via transport: ${this.#transport.sessionId}`
-      );
+        });
+        await this.#client.connect(this.#transport, {
+          timeout: 10000000,
+        });
+        console.log(
+          `Connected to server via httpStream transport; transport session id: ${this.#transport.sessionId}`
+        );
 
-      this.setUpTransport();
-    } catch (e) {
-      console.log("Failed to connect to MCP server: ", e);
-      throw e;
+        this.#setUpTransport();
+      } catch (e) {
+        console.log("Failed to connect to MCP server via httpStream: ", e);
+        throw e;
+      }
+    } else {
+      try {
+        // this.#transport = new StdioClientTransport({
+        //   command: "npx",
+        //   args: ["tsx", "src/index.ts"],
+        // });
+
+        this.#transport = new StdioClientTransport({
+          command: "npx",
+          args: ["tsx", "src/raw-mcp-quick-start.ts"],
+        });
+
+        await this.#client.connect(this.#transport);
+
+        this.#setUpTransport();
+      } catch (e) {
+        console.log("Failed to connect to MCP server via stdio: ", e);
+        throw e;
+      }
     }
   }
 
-  private setUpTransport() {
+  #setUpTransport() {
     if (this.#transport === null) {
       return;
     }
@@ -56,9 +86,10 @@ class MCPClient {
       await this.cleanup();
     };
 
-    this.#transport.onmessage = (message) => {
-      console.log("message received: ", message);
-    };
+    // 🚨 Below will stop the connection between each request and response
+    // this.#transport.onmessage = (message) => {
+    //   console.log("message received: ", message);
+    // };
   }
 
   async waitForCompletion() {
@@ -72,24 +103,63 @@ class MCPClient {
   }
 }
 
-async function main() {
-  const client1 = new MCPClient();
-  const client2 = new MCPClient();
+async function multiHttpStreamClients() {
+  const port = process.env.PORT ?? 8080;
+  const client1 = new MCPClient({ transportType: "httpStream" });
+  //   const client2 = new MCPClient({ transportType: "httpStream" });
 
   try {
-    await client1.connectToServer("http://localhost:8080/mcp");
-    await client2.connectToServer("http://localhost:8080/mcp");
+    await client1.connectToServer(`http://localhost:${port}/mcp`);
+    // await client2.connectToServer(`http://localhost:${port}/mcp`);
 
-    const result1 = await client1.client.listTools();
-    console.log(result1);
+    // const result1 = await client1.client.listTools();
+    // console.log(result1);
 
-    const result2 = await client2.client.listTools();
-    console.log(result2);
+    // const result2 = await client2.client.listTools();
+    // console.log(result2);
 
-    // await client.waitForCompletion();
+    const toolResult1 = await client1.client.callTool({
+      name: "add",
+      arguments: {
+        a: 1,
+        b: 3,
+      },
+    });
+    console.log("callTool: ", JSON.stringify(toolResult1, null, 2));
   } finally {
-    await client1.cleanup();
+    // await client1.cleanup();
+    // await client2.cleanup();
   }
 }
 
-main();
+multiHttpStreamClients();
+
+async function multiStdioClients() {
+  const client1 = new MCPClient({ transportType: "stdio" });
+  // const client2 = new MCPClient({ transportType: "stdio" });
+
+  try {
+    await client1.connectToServer();
+    // await client2.connectToServer();
+
+    const result1 = await client1.client.listTools();
+    console.log("listTools: ", JSON.stringify(result1, null, 2));
+
+    const toolResult1 = await client1.client.callTool({
+      name: "add",
+      arguments: {
+        a: 1,
+        b: 3,
+      },
+    });
+    console.log("callTool: ", JSON.stringify(toolResult1, null, 2));
+
+    // const result2 = await client2.client.listTools();
+    // console.log(result2);
+  } finally {
+    // await client1.cleanup();
+    // await client2.cleanup();
+  }
+}
+
+// multiStdioClients();

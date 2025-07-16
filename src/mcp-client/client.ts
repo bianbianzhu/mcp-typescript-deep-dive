@@ -59,7 +59,7 @@ class MCPClient {
 
         this.#transport = new StdioClientTransport({
           command: "npx",
-          args: ["tsx", "src/raw-mcp-quick-start.ts"],
+          args: ["tsx", "src/mcp-servers/raw-stdio-server-quick-start.ts"],
         });
 
         await this.#client.connect(this.#transport);

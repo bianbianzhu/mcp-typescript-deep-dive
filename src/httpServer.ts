@@ -181,9 +181,5 @@ function getBody(request: http.IncomingMessage): Promise<unknown> {
     });
   } catch (error) {
     console.error(error);
-  } finally {
-    // if (serverWithClose) {
-    //   await serverWithClose.close();
-    // }
   }
 })();

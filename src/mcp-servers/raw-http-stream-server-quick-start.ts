@@ -370,7 +370,7 @@ app.post("/mcp/low-level", async (req, res) => {
 
 app
   .listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT} - raw http-stream server`);
   })
   .on("error", (err) => {
     console.error(err);

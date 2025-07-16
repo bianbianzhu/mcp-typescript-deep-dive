@@ -18,6 +18,7 @@
     "mcp:raw-stdio": "tsx --watch src/raw-stdio-server-quick-start.ts",
     "mcp:raw-http-stream": "tsx --watch src/raw-http-stream-server-quick-start.ts",
     "mcp:client:stdio": "tsx src/client.ts",
+    "jsonrpc:dev": "tsx --watch src/jsonrpc/jsonrpc.ts",
     "nuke": "rm -rf node_modules dist"
   },
   "keywords": [],
@@ -32,9 +33,11 @@
     "@langchain/langgraph": "^0.3.8",
     "@langchain/openai": "^0.5.18",
     "@modelcontextprotocol/sdk": "^1.15.1",
+    "ajv": "^8.17.1",
     "express": "^5.1.0",
     "fastmcp": "^3.8.5",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "zod-to-json-schema": "^3.24.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",

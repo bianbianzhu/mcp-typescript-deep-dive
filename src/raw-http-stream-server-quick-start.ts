@@ -52,6 +52,7 @@ function createHighLevelServer() {
           text: "this is high level server addition tool",
         },
       ],
+      isError: false,
     })
   );
 
@@ -70,6 +71,7 @@ function createHighLevelServer() {
           text: "this is high level server subtraction tool",
         },
       ],
+      isError: false,
     })
   );
 

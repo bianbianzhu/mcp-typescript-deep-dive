@@ -3,16 +3,17 @@ import Anthropic from "@anthropic-ai/sdk";
 import {
   MessageParam,
   Tool as AnthropicTool,
+  ToolResultBlockParam,
 } from "@anthropic-ai/sdk/resources";
 import readline from "readline";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import {
+  CallToolResultSchema,
   CallToolRequest,
   CallToolRequestSchema,
   Tool as ModelContextProtocolTool,
-  TextContent,
 } from "@modelcontextprotocol/sdk/types.js";
 
 type TransportType = "stdio" | "httpStream";
@@ -170,6 +171,14 @@ rl.on("line", async (line) => {
       (item) => item.type === "tool_use"
     );
 
+    const toolResultMessage: {
+      role: "user";
+      content: ToolResultBlockParam[];
+    } = {
+      role: "user",
+      content: [],
+    };
+
     for (const toolCall of toolCalls) {
       const { name, input } = toolCall;
 
@@ -195,9 +204,18 @@ rl.on("line", async (line) => {
         const client = getClientForTool(name);
 
         if (!client) {
-          console.log(
+          console.error(
             `No client found for the tool; tool name: ${name}; skipping the tool call`
           );
+
+          const toolResultContent: ToolResultBlockParam = {
+            type: "tool_result",
+            tool_use_id: toolCall.id,
+            content: `Tool call failed: No MCP client found for the tool; tool name: ${name}; skipping the tool call`,
+            is_error: true,
+          };
+          toolResultMessage.content.push(toolResultContent);
+
           continue;
         }
 
@@ -207,69 +225,92 @@ rl.on("line", async (line) => {
         });
         console.log("Tool result: ", toolResult);
 
-        if (toolResult.isError) {
-          console.log("Tool call failed");
+        const parsedToolResult = CallToolResultSchema.safeParse(toolResult);
+
+        if (!parsedToolResult.success) {
+          console.error("Tool call result validation failed");
+
+          const toolResultContent: ToolResultBlockParam = {
+            type: "tool_result",
+            tool_use_id: toolCall.id,
+            content: `Tool call result validation failed: ${parsedToolResult.error.message}`,
+            is_error: true,
+          };
+          toolResultMessage.content.push(toolResultContent);
+
           continue;
         }
 
-        const { content } = toolResult;
+        const { isError, content } = parsedToolResult.data;
 
-        // check if the toolResult's content is a non-empty array
-        if (!Array.isArray(content) || content.length === 0) {
-          console.log("Tool call result content validation failed");
-          continue;
+        if (isError) {
+          console.error("Tool call failed");
+          // content will be an error message
         }
 
-        // filter out the content that is not a text
-        const textContents = content.filter(
-          (item) => item.type === "text"
-        ) as TextContent[];
+        // filter out the content that is not a text (TODO: handle other types of content)
+        const textContents = content.filter((item) => item.type === "text");
 
         if (textContents.length === 0) {
-          console.log("No text content in the tool call result");
+          console.error("No text content in the tool call result");
+
+          const toolResultContent: ToolResultBlockParam = {
+            type: "tool_result",
+            tool_use_id: toolCall.id,
+            content: `Tool call failed: No text content in the tool call result; The host does not support other types of content yet.`,
+            is_error: true,
+          };
+          toolResultMessage.content.push(toolResultContent);
           continue;
         }
 
-        const toolResultMessage: MessageParam = {
-          role: "user",
-          content: [
-            {
-              type: "tool_result",
-              tool_use_id: toolCall.id,
-              content: textContents[0].text ?? "Failed to call the tool",
-            },
-          ],
+        const toolResultContent: ToolResultBlockParam = {
+          type: "tool_result",
+          tool_use_id: toolCall.id,
+          content: textContents ?? "Failed to call the tool",
+          is_error: isError,
         };
 
-        messageHistory.push(toolResultMessage);
-
-        // resend the message history with the tool result to the assistant
-        // We assume that the assistant will give the final answer (without any tool calls)
-        const response = await createMessage({
-          messages: messageHistory,
-          tools,
-        });
-
-        const aiMessages: MessageParam[] = response.content
-          .filter((item) => item.type === "text")
-          .map((item) => ({
-            role: "assistant",
-            content: item.text,
-          }));
-
-        messageHistory.push(...aiMessages);
-
-        for (const aiMessage of aiMessages) {
-          console.log(`Assistant: ${aiMessage.content}`);
-        }
+        toolResultMessage.content.push(toolResultContent);
       } else {
-        console.log("Tool call rejected");
+        console.warn("Tool call rejected by the user");
+
+        const toolResultContent: ToolResultBlockParam = {
+          type: "tool_result",
+          tool_use_id: toolCall.id,
+          content: `Tool call rejected by the user. The user does not want to call the tool. Use your own knowledge to answer the question. If you cannot answer the question, just say "I don't know"`,
+          is_error: false,
+        };
+
+        toolResultMessage.content.push(toolResultContent);
         continue;
       }
     }
+
+    messageHistory.push(toolResultMessage);
+
+    // resend the message history with the tool result to the assistant
+    // We assume that the assistant will give the final answer (without any tool calls)
+    const followUpResponse = await createMessage({
+      messages: messageHistory,
+      tools,
+    });
+
+    const aiMessages: MessageParam[] = followUpResponse.content
+      .filter((item) => item.type === "text")
+      .map((item) => ({
+        role: "assistant",
+        content: item.text,
+      }));
+
+    messageHistory.push(...aiMessages);
+
+    for (const aiMessage of aiMessages) {
+      console.log(`Assistant: ${aiMessage.content}`);
+    }
   }
 
-  // console.log(JSON.stringify(messageHistory, null, 2));
+  console.log(JSON.stringify(messageHistory, null, 2));
 
   rl.prompt();
 });

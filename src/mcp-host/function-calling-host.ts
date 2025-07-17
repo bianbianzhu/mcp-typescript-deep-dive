@@ -148,6 +148,13 @@ rl.on("line", async (line) => {
 
   // messageHistory.push(response); // Error: id is not permitted in the messages
 
+  const aiMessage: MessageParam = {
+    role: response.role,
+    content: response.content,
+  };
+
+  messageHistory.push(aiMessage);
+
   const displayContent = response.content.filter(
     (item) => item.type === "text"
   );
@@ -155,13 +162,6 @@ rl.on("line", async (line) => {
   for (const content of displayContent) {
     console.log(`Assistant: ${content.text}`);
   }
-
-  const aiMessage: MessageParam = {
-    role: response.role,
-    content: response.content,
-  };
-
-  messageHistory.push(aiMessage);
 
   // if there's at least one tool call in the content, the stop_reason is "tool_use"
   if (response.stop_reason === "tool_use") {

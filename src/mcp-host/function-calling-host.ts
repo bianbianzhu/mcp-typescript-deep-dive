@@ -93,13 +93,6 @@ class MCPClient<T extends TransportType = TransportType> {
 // 2. host - stdio interface
 const PORT = process.env.PORT ?? 8080;
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
-const anthropic = new Anthropic();
-
 const client1 = new MCPClient({ transportType: "httpStream" });
 
 await client1.connectToServer(`http://localhost:${PORT}/mcp`);
@@ -123,6 +116,13 @@ const tools = convertModelContextProtocolToolsToAnthropicTools([
   ...modelContextProtocolToolsHttpStream,
   ...modelContextProtocolToolsStdio,
 ]);
+
+const anthropic = new Anthropic();
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 
 const messageHistory: MessageParam[] = [];
 

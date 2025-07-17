@@ -51,6 +51,18 @@ rl.on("close", () => {
   console.log("bye");
 });
 
+const signals = ["SIGINT", "SIGTERM", "SIGHUP", "SIGTSTP"];
+signals.forEach((signal) => {
+  process.on(signal, () => {
+    console.log(`\n${signal} received. Shutting down gracefully...`);
+
+    // Close readline interface
+    rl.close();
+
+    console.log("Cleanup completed");
+  });
+});
+
 async function createMessage(messages: MessageParam[]) {
   const response = await anthropic.messages.create({
     model: "claude-3-5-sonnet-latest",

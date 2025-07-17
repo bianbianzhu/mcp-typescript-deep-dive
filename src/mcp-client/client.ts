@@ -112,8 +112,8 @@ async function multiHttpStreamClients() {
     await client1.connectToServer(`http://localhost:${port}/mcp`);
     // await client2.connectToServer(`http://localhost:${port}/mcp`);
 
-    // const result1 = await client1.client.listTools();
-    // console.log(result1);
+    const result1 = await client1.client.listTools();
+    console.log(result1);
 
     // const result2 = await client2.client.listTools();
     // console.log(result2);

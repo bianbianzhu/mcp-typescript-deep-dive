@@ -18,6 +18,7 @@
     "mcp:raw-stdio": "tsx --watch src/mcp-servers/raw-stdio-server-quick-start.ts",
     "mcp:raw-http-stream": "tsx --watch src/mcp-servers/raw-http-stream-server-quick-start.ts",
     "jsonrpc:dev": "tsx --watch src/jsonrpc/jsonrpc.ts",
+    "mcp:fc-host": "tsx --watch src/mcp-host/function-calling-host.ts",
     "nuke": "rm -rf node_modules dist"
   },
   "keywords": [],

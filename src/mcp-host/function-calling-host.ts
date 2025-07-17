@@ -89,6 +89,7 @@ class MCPClient<T extends TransportType = TransportType> {
     await this.#client.close();
   }
 }
+
 // 2. host - stdio interface
 const PORT = process.env.PORT ?? 8080;
 

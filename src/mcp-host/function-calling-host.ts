@@ -257,7 +257,7 @@ rl.on("line", async (line) => {
           const toolResultContent: ToolResultBlockParam = {
             type: "tool_result",
             tool_use_id: toolCall.id,
-            content: `Tool call failed: No text content in the tool call result; The host does not support other types of content yet.`,
+            content: `No text content in the tool call result; The tool call may be correct, but the tool call result is not a text. Currently, the host cannot handle other types, like image, audio, etc; Only text content is supported.`,
             is_error: true,
           };
           toolResultMessage.content.push(toolResultContent);

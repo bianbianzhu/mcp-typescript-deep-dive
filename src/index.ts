@@ -409,28 +409,21 @@ server.addTool({
 
 // for testing the combination return types
 server.addTool({
-  name: "generate_image_and_text",
-  description: "Generate an image and text from various resources",
+  name: "generate_image_and_audio",
+  description: "Generate an image and audio from various resources",
   parameters: z.object({
     url: z.string().optional().describe("The URL of the image to generate"),
   }),
 
   execute: async (_args) => {
     const imgContent = await imageContent({
-      url: "https://example.com/image.png",
+      url: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Cat_August_2010-4.jpg/1200px-Cat_August_2010-4.jpg",
     });
     const audContent = await audioContent({
-      url: "https://example.com/audio.mp3",
+      url: "http://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/bonus.wav",
     });
     return {
-      content: [
-        {
-          type: "text",
-          text: "Hello, world!",
-        },
-        imgContent,
-        audContent,
-      ],
+      content: [imgContent, audContent],
       isError: false,
     };
   },

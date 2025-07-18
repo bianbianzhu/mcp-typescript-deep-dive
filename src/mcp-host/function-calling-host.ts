@@ -184,6 +184,15 @@ rl.on("line", async (line) => {
 
       if (!isValidCallToolRequestArguments(input)) {
         console.log("Invalid tool call arguments");
+
+        const toolResultContent: ToolResultBlockParam = {
+          type: "tool_result",
+          tool_use_id: toolCall.id,
+          content: `Invalid tool call arguments: ${JSON.stringify(input)}`,
+          is_error: true,
+        };
+        toolResultMessage.content.push(toolResultContent);
+
         continue;
       }
 

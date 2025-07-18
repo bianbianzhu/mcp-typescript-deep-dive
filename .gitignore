@@ -9,3 +9,6 @@ dist
 .langgraph_api
 
 mcp.json
+
+.cursor
+.vscode

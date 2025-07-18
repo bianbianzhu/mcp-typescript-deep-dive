@@ -5,11 +5,10 @@
   "packageManager": "pnpm@10.10.0",
   "type": "module",
   "scripts": {
-    "dev": "pnpm langgraph:in_mem:up",
+    "dev": "tsx --watch src/index.ts",
     "build": "tsc",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "langgraph:in_mem:up": "npx @langchain/langgraph-cli dev --port 8888",
     "test": "jest",
     "mcp:inspect": "npx fastmcp inspect src/index.ts",
     "mcp:dev": "tsx --watch src/index.ts",

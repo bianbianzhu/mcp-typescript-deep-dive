@@ -2,8 +2,8 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 
 const transport = new StdioClientTransport({
-  command: "node",
-  args: ["server.js"],
+  command: "tsx",
+  args: ["src/mcp-servers/raw-stdio-server-quick-start.ts"],
 });
 
 const client = new Client({
@@ -20,9 +20,10 @@ console.log(tools);
 
 // Call a tool
 const result = await client.callTool({
-  name: "example-tool",
+  name: "add",
   arguments: {
-    arg1: "value",
+    a: 100,
+    b: 200,
   },
 });
 

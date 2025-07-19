@@ -20,7 +20,7 @@ console.log(tools);
 
 // Call a tool
 const result = await client.callTool({
-  name: "add",
+  name: "subtract",
   arguments: {
     a: 100,
     b: 200,

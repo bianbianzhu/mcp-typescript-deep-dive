@@ -13,14 +13,14 @@ const server = new McpServer({
 
 // Add an addition tool
 server.registerTool(
-  "add",
+  "subtract",
   {
-    title: "Addition Tool",
-    description: "Add two numbers",
+    title: "Subtraction Tool",
+    description: "Subtract two numbers",
     inputSchema: { a: z.number(), b: z.number() },
   },
   async ({ a, b }) => ({
-    content: [{ type: "text", text: String(a + b) }],
+    content: [{ type: "text", text: String(a - b) }],
   })
 );
 

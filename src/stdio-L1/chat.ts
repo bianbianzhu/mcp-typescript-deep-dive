@@ -31,15 +31,13 @@ rl.on("line", async (line) => {
   const responseMsg = await createMessage([...messageHistory, userMessage]);
 
   const aiMessage: MessageParam = {
-    role: "assistant",
-    content:
-      responseMsg.content[0].type === "text"
-        ? responseMsg.content[0].text
-        : "unknown",
+    role: responseMsg.role,
+    content: responseMsg.content,
   };
 
   messageHistory.push(aiMessage);
 
+  // display purpose
   console.log(
     `Assistant: ${responseMsg.content[0].type === "text" ? responseMsg.content[0].text : "unknown"}`
   );

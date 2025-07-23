@@ -12,20 +12,6 @@ import { randomBytes } from "crypto";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 
-// Command line argument parsing
-const args = process.argv.slice(2);
-if (args.length === 0) {
-  console.error(
-    "Usage: mcp-server-filesystem [allowed-directory] [additional-directories...]"
-  );
-  console.error("Note: Allowed directories can be provided via:");
-  console.error("  1. Command-line arguments (shown above)");
-  console.error("  2. MCP roots protocol (if client supports it)");
-  console.error(
-    "At least one directory must be provided by EITHER method for the server to operate."
-  );
-}
-
 function expandHome(filepath: string): string {
   if (filepath.startsWith("~/") || filepath === "~") {
     return path.join(os.homedir(), filepath.slice(1));

@@ -1,4 +1,5 @@
 import { ChildProcess, spawn } from "node:child_process";
+import { once } from "node:events";
 import { z } from "zod";
 
 const jsonrpcSchemaBase = z.object({
@@ -240,6 +241,24 @@ class StdioClientTransport {
   get childProcess(): ChildProcess | undefined {
     return this.#_subProcess;
   }
+
+  async send(message: JSONRPCMessage): Promise<void> {
+    if (!this.#_subProcess) {
+      throw new Error("Sub process is not running");
+    }
+
+    if (this.#_subProcess.stdin === null) {
+      throw new Error("Sub process stdin is not available");
+    }
+
+    const json = JSON.stringify(message) + "\n";
+
+    const canWrite = this.#_subProcess.stdin?.write(json);
+
+    if (!canWrite) {
+      await once(this.#_subProcess.stdin, "drain");
+    }
+  }
 }
 
 class ReadBuffer {
@@ -290,11 +309,9 @@ const transport = new StdioClientTransport(
 await transport.start();
 
 // 3. 发送请求 - 必须有换行符
-transport.childProcess?.stdin?.write(JSON.stringify(initializeRequest) + "\n");
-transport.childProcess?.stdin?.write(
-  JSON.stringify(initializedNotification) + "\n"
-);
-transport.childProcess?.stdin?.write(JSON.stringify(toolsListRequest) + "\n");
-transport.childProcess?.stdin?.write(JSON.stringify(toolsCallRequest) + "\n");
+transport.send(initializeRequest);
+transport.send(initializedNotification);
+transport.send(toolsListRequest);
+transport.send(toolsCallRequest);
 
 await transport.close();

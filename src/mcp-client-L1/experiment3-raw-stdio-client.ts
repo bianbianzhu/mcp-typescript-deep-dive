@@ -1,4 +1,7 @@
+import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { ChildProcess, spawn } from "node:child_process";
+import { once } from "node:events";
 import { z } from "zod";
 
 const jsonrpcSchemaBase = z.object({
@@ -135,7 +138,7 @@ const toolsListRequest: JsonRpcRequest = {
 };
 
 // 1.4 tools/call
-const toolsCallRequest: JsonRpcRequest<typeof toolsCallRequestParamsSchema> = {
+const _toolsCallRequest: JsonRpcRequest<typeof toolsCallRequestParamsSchema> = {
   jsonrpc: "2.0",
   method: "tools/call",
   id: 2,
@@ -172,12 +175,8 @@ class StdioClientTransport {
   onClose?: () => void;
   onMessage?: (message: JSONRPCMessage) => void;
 
-  constructor(
-    serverParams: StdioServerParameters,
-    onMessage?: (message: JSONRPCMessage) => void
-  ) {
+  constructor(serverParams: StdioServerParameters) {
     this.#_serverParams = serverParams;
-    this.onMessage = onMessage;
   }
 
   /**
@@ -240,6 +239,24 @@ class StdioClientTransport {
   get childProcess(): ChildProcess | undefined {
     return this.#_subProcess;
   }
+
+  async send(message: JSONRPCMessage): Promise<void> {
+    if (!this.#_subProcess) {
+      throw new Error("Sub process is not running");
+    }
+
+    if (this.#_subProcess.stdin === null) {
+      throw new Error("Sub process stdin is not available");
+    }
+
+    const json = JSON.stringify(message) + "\n";
+
+    const canWrite = this.#_subProcess.stdin?.write(json);
+
+    if (!canWrite) {
+      await once(this.#_subProcess.stdin, "drain");
+    }
+  }
 }
 
 class ReadBuffer {
@@ -277,24 +294,158 @@ class ReadBuffer {
   }
 }
 
-const transport = new StdioClientTransport(
-  {
-    command: "./node_modules/.bin/tsx",
-    args: ["src/mcp-servers/raw-stdio-server-quick-start.ts"],
-  },
-  (message) => {
-    console.log(JSON.stringify(message, null, 2));
+type ClientInfo = {
+  name: string;
+  version: string;
+  title?: string;
+};
+
+type ClientOptions = {
+  capabilities: Record<string, unknown>; // mock capabilities
+};
+
+class Client {
+  #_transport?:
+    | StdioClientTransport
+    | StreamableHTTPClientTransport
+    | SSEClientTransport;
+  #_clientInfo: ClientInfo;
+
+  #_pendingRequests = new Map<
+    string | number | null,
+    (response: JSONRPCMessage) => void
+  >();
+
+  constructor(clientInfo: ClientInfo, _options?: ClientOptions) {
+    this.#_clientInfo = clientInfo;
   }
-);
 
-await transport.start();
+  async connect(
+    transport:
+      | StdioClientTransport
+      | StreamableHTTPClientTransport
+      | SSEClientTransport
+  ): Promise<void> {
+    if (
+      transport instanceof StreamableHTTPClientTransport ||
+      transport instanceof SSEClientTransport
+    ) {
+      throw new Error(
+        "Sorry, we don't support this transport yet. Please use StdioClientTransport instead."
+      );
+    }
 
-// 3. 发送请求 - 必须有换行符
-transport.childProcess?.stdin?.write(JSON.stringify(initializeRequest) + "\n");
-transport.childProcess?.stdin?.write(
-  JSON.stringify(initializedNotification) + "\n"
-);
-transport.childProcess?.stdin?.write(JSON.stringify(toolsListRequest) + "\n");
-transport.childProcess?.stdin?.write(JSON.stringify(toolsCallRequest) + "\n");
+    this.#_transport = transport;
 
-await transport.close();
+    this.#_transport.onMessage = (message) => {
+      if (!("id" in message) || message.id === undefined) {
+        return;
+      }
+
+      // This is just a mock implementation, MUST process the messages according to their types.
+      const resolver = this.#_pendingRequests.get(message.id);
+      if (resolver) {
+        resolver(message);
+        this.#_pendingRequests.delete(message.id);
+      }
+    };
+
+    await this.#_transport.start();
+
+    await this.#_transport.send(initializeRequest);
+
+    await this.#_transport.send(initializedNotification);
+  }
+
+  get transport():
+    | StdioClientTransport
+    | StreamableHTTPClientTransport
+    | SSEClientTransport
+    | undefined {
+    return this.#_transport;
+  }
+
+  async listTools() {
+    if (!this.#_transport) {
+      throw new Error("Transport is not connected");
+    }
+
+    if (
+      this.#_transport instanceof StreamableHTTPClientTransport ||
+      this.#_transport instanceof SSEClientTransport
+    ) {
+      throw new Error(
+        "Sorry, we don't support this transport yet. Please use StdioClientTransport instead."
+      );
+    }
+
+    const responsePromise = new Promise<JSONRPCMessage>((resolve) => {
+      this.#_pendingRequests.set(toolsListRequest.id ?? 1, resolve);
+    });
+
+    await this.#_transport.send(toolsListRequest);
+
+    return responsePromise;
+  }
+
+  async callTool({
+    toolName,
+    args,
+  }: {
+    toolName: string;
+    args: Record<string, unknown>;
+  }) {
+    if (!this.#_transport) {
+      throw new Error("Transport is not connected");
+    }
+
+    if (
+      this.#_transport instanceof StreamableHTTPClientTransport ||
+      this.#_transport instanceof SSEClientTransport
+    ) {
+      throw new Error(
+        "Sorry, we don't support this transport yet. Please use StdioClientTransport instead."
+      );
+    }
+
+    const toolsCallRequest: JsonRpcRequest<
+      typeof toolsCallRequestParamsSchema
+    > = {
+      jsonrpc: "2.0",
+      method: "tools/call",
+      id: 2,
+      params: {
+        name: toolName,
+        arguments: args,
+      },
+    };
+
+    const responsePromise = new Promise<JSONRPCMessage>((resolve) => {
+      this.#_pendingRequests.set(toolsCallRequest.id ?? 2, resolve);
+    });
+
+    await this.#_transport.send(toolsCallRequest);
+
+    return responsePromise;
+  }
+}
+
+const transport = new StdioClientTransport({
+  command: "./node_modules/.bin/tsx",
+  args: ["src/mcp-servers/raw-stdio-server-quick-start.ts"],
+});
+
+const client = new Client({
+  name: "mcp-client",
+  version: "1.0.0",
+});
+
+await client.connect(transport);
+
+const tools = await client.listTools();
+
+console.log(JSON.stringify(tools, null, 2));
+
+const result = await client.callTool({ toolName: "add", args: { a: 1, b: 2 } });
+
+console.log(JSON.stringify(result, null, 2));

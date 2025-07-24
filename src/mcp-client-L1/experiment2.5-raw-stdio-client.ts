@@ -141,7 +141,7 @@ const toolsCallRequest: JsonRpcRequest<typeof toolsCallRequestParamsSchema> = {
   method: "tools/call",
   id: 2,
   params: {
-    name: "add",
+    name: "subtract",
     arguments: {
       a: 1000,
       b: 123,

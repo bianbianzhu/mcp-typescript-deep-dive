@@ -76,7 +76,7 @@ class MCPClient<T extends TransportType = TransportType> {
         this.#transport = new StdioClientTransport({
           command: "npx",
           // fastmcp server example (index.ts)
-          args: ["tsx", "src/mcp-servers/fastmcp-stdio-server.ts"],
+          args: ["tsx", "src/mcp-servers/low-level-file-system.ts"],
         });
 
         await this.#client.connect(this.#transport);

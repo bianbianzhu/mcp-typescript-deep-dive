@@ -51,7 +51,7 @@ child.stdin.write('{"method":"notifications/initialized", "jsonrpc":"2.0"}\n');
 child.stdin.write('{ "method": "tools/list", "jsonrpc": "2.0", "id": 1 }\n');
 
 child.stdin.write(
-  '{ "method": "tools/call", "params": { "name": "add", "arguments": { "a": 15, "b": 13 } }, "jsonrpc": "2.0", "id": 2 }\n'
+  '{ "method": "tools/call", "params": { "name": "subtract", "arguments": { "a": 15, "b": 13 } }, "jsonrpc": "2.0", "id": 2 }\n'
 );
 
 child.stdin.end();

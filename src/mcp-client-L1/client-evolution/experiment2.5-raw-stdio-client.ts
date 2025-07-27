@@ -299,7 +299,7 @@ class ReadBuffer {
 const transport = new StdioClientTransport(
   {
     command: "./node_modules/.bin/tsx",
-    args: ["src/mcp-servers/raw-stdio-server-quick-start.ts"],
+    args: ["src/mcp-servers/server-evolution/experiment2.5-stdio-server.ts"],
   },
   (message) => {
     console.log(JSON.stringify(message, null, 2));

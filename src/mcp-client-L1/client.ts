@@ -57,6 +57,7 @@ class MCPClient {
         //   args: ["tsx", "src/index.ts"],
         // });
 
+        // TODO: make the command and args configurable
         this.#transport = new StdioClientTransport({
           command: "npx",
           args: ["tsx", "src/mcp-servers/raw-stdio-server-quick-start.ts"],

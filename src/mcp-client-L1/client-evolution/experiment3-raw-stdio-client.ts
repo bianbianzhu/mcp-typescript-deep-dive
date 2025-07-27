@@ -342,6 +342,10 @@ class Client {
         return;
       }
 
+      // if (message.id === 0) {
+      //   console.log(message);
+      // }
+
       // This is just a mock implementation, MUST process the messages according to their types.
       const resolver = this.#_pendingRequests.get(message.id);
       if (resolver) {
@@ -432,7 +436,7 @@ class Client {
 
 const transport = new StdioClientTransport({
   command: "./node_modules/.bin/tsx",
-  args: ["src/mcp-servers/raw-stdio-server-quick-start.ts"],
+  args: ["src/mcp-servers/server-evolution/experiment3-stdio-server.ts"],
 });
 
 const client = new Client({

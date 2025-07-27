@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "name": "app-config",
+  "description": "app-config",
+  "author": "app-config",
+  "license": "app-config",
+  "dependencies": {
+    "app-config": "1.0.0"
+  }
+}

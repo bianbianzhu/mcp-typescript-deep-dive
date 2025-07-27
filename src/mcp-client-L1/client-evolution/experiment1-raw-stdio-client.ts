@@ -154,7 +154,7 @@ const child = spawn(
   // a bash subprocess, it doesn't have access to the local node_modules/.bin directory where tsx is installed.
   // use the direct path to tsx
   "./node_modules/.bin/tsx",
-  ["src/mcp-servers/raw-stdio-server-quick-start.ts"],
+  ["src/mcp-servers/server-evolution/experiment1-stdio-server.ts"],
   {
     stdio: ["pipe", "pipe", "pipe"],
     env: process.env,

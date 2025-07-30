@@ -17,24 +17,48 @@ import {
   Tool as ModelContextProtocolTool,
 } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
+import path from "path";
+import fs from "fs";
 
 type TransportType = "stdio" | "httpStream";
 
-const url_schema = z
-  .string()
-  .url({
-    message: "httpStream needs a valid URL; did you provide a folder path?",
-  })
-  .describe("The server URL for the httpStream transport.");
-const filePath_schema = z.object({
+const httpStream_args_schema = z.object({
+  url: z
+    .string()
+    .url({
+      message: "httpStream needs a valid URL; did you provide a folder path?",
+    })
+    .describe("The server URL for the httpStream transport."),
+  headers: z
+    .record(z.string(), z.string())
+    .optional()
+    .describe("The headers to send to the server."),
+});
+const stdio_args_schema = z.object({
   command: z.string().describe("The command to run the MCP server."),
   args: z.array(z.string()).describe("The arguments to run the MCP server."),
 });
 
 const argsSchema = {
-  httpStream: url_schema,
-  stdio: filePath_schema,
+  httpStream: httpStream_args_schema,
+  stdio: stdio_args_schema,
 } satisfies Record<TransportType, z.ZodType>;
+
+const configSchema = z.object({
+  mcpServers: z.record(
+    z.string(),
+    z.union([
+      z.object({
+        url: z.string().url(),
+        headers: z.record(z.string(), z.string()).optional(),
+      }),
+      z.object({
+        command: z.string(),
+        args: z.array(z.string()),
+      }),
+    ])
+  ),
+});
 
 // 1. client
 class MCPClient<T extends TransportType = TransportType> {
@@ -57,7 +81,12 @@ class MCPClient<T extends TransportType = TransportType> {
 
   async connectToServer(
     ...args: T extends "httpStream"
-      ? [serverUrl: string]
+      ? [
+          {
+            url: string;
+            headers?: Record<string, string>;
+          },
+        ]
       : [
           {
             command: string;
@@ -78,14 +107,19 @@ class MCPClient<T extends TransportType = TransportType> {
     }
 
     if (this.#transportType === "httpStream") {
-      const url = new URL(parsedArgs.data as z.infer<typeof url_schema>);
+      const { url, headers } = parsedArgs.data as z.infer<
+        typeof httpStream_args_schema
+      >;
+
+      const urlObject = new URL(url);
 
       try {
-        this.#transport = new StreamableHTTPClientTransport(url, {
+        this.#transport = new StreamableHTTPClientTransport(urlObject, {
           requestInit: {
             headers: {
               // for authentication - the fastmcp server example (index.ts)
               ["x-api-key"]: `Bearer 1234567890`,
+              ...headers,
             },
           },
         });
@@ -103,7 +137,7 @@ class MCPClient<T extends TransportType = TransportType> {
       }
     } else {
       const { command, args } = parsedArgs.data as z.infer<
-        typeof filePath_schema
+        typeof stdio_args_schema
       >;
 
       try {
@@ -128,34 +162,14 @@ class MCPClient<T extends TransportType = TransportType> {
 }
 
 // 2. host - stdio interface
-const PORT = process.env.PORT ?? 8080;
+const CONFIG_FILE_NAME = "mcp-v3.json";
 
-const client1 = new MCPClient({ transportType: "httpStream" });
+const { clients, serverNames, mcpTools, getClientForTool } =
+  await connectToMCPServers({
+    configFileName: CONFIG_FILE_NAME,
+  });
 
-await client1.connectToServer(`http://localhost:${PORT}/mcp`);
-
-const { tools: modelContextProtocolToolsHttpStream } =
-  await client1.client.listTools(); // returns { tools: [@modelcontextprotocol tool definitions] }
-
-const client2 = new MCPClient({ transportType: "stdio" });
-
-await client2.connectToServer({
-  command: "npx",
-  args: ["-y", "@upstash/context7-mcp"],
-});
-
-const { tools: modelContextProtocolToolsStdio } =
-  await client2.client.listTools(); // returns { tools: [@modelcontextprotocol tool definitions] }
-
-const toolsPerClient = {
-  ["1"]: { tools: modelContextProtocolToolsHttpStream, client: client1 },
-  ["2"]: { tools: modelContextProtocolToolsStdio, client: client2 },
-} as const;
-
-const tools = convertModelContextProtocolToolsToAnthropicTools([
-  ...modelContextProtocolToolsHttpStream,
-  ...modelContextProtocolToolsStdio,
-]);
+const tools = convertModelContextProtocolToolsToAnthropicTools(mcpTools);
 
 const anthropic = new Anthropic();
 
@@ -165,6 +179,11 @@ const rl = readline.createInterface({
 });
 
 const messageHistory: MessageParam[] = [];
+const serverInfoMessage: MessageParam = {
+  role: "user",
+  content: `Currently, you are connected to the following MCP servers: ${Array.from(serverNames).join(", ")}.`,
+};
+messageHistory.push(serverInfoMessage);
 
 rl.setPrompt("user: ");
 rl.prompt();
@@ -198,7 +217,10 @@ async function shutdown() {
   try {
     rl.close();
 
-    await Promise.all([client1.cleanup(), client2.cleanup()]);
+    const clientsToCleanup = Array.from(clients.values());
+    const promises = clientsToCleanup.map((client) => client.cleanup());
+
+    await Promise.all(promises);
 
     console.log("Cleanup completed");
   } catch (error) {
@@ -242,7 +264,11 @@ async function processToolCalls(response: Message): Promise<{
     }
 
     console.log(
-      "Requesting the permission to call the tool:",
+      `Requesting the permission to call the tool${
+        isDestructiveTool(name, mcpTools)
+          ? "; ❌❌❌This cannot be undone❌❌❌"
+          : ""
+      }:`,
       name,
       input,
       "[y/n]"
@@ -442,7 +468,7 @@ async function createMessage({
   tools?: AnthropicTool[];
 }) {
   const response = await anthropic.messages.create({
-    model: "claude-3-5-sonnet-20240620",
+    model: "claude-4-sonnet-20250514",
     messages,
     max_tokens: 1000,
     temperature: 0.5,
@@ -479,12 +505,102 @@ function isValidCallToolRequestArguments(
     .success;
 }
 
-function getClientForTool(toolName: string) {
-  for (const { tools, client } of Object.values(toolsPerClient)) {
-    if (tools.some((tool) => tool.name === toolName)) {
-      return client;
+function loadMCPConfig(configFileName: string) {
+  const mcpConfig = fs.readFileSync(
+    // for ESM modules, we need to use import.meta.dirname to get the directory name
+    path.join(import.meta.dirname, configFileName),
+    "utf8"
+  );
+
+  const parsedConfig = configSchema.safeParse(JSON.parse(mcpConfig));
+
+  if (!parsedConfig.success) {
+    throw new Error(`Invalid MCP config: ${parsedConfig.error.message}`);
+  }
+
+  const { mcpServers } = parsedConfig.data;
+
+  return mcpServers;
+}
+
+async function connectToMCPServers({
+  configFileName,
+}: {
+  configFileName: string;
+}) {
+  const mcpServers = loadMCPConfig(configFileName);
+
+  const clients = new Map<string, MCPClient>();
+  const serverNames = new Set<string>();
+  const toolsPerClient = new Map<string, ModelContextProtocolTool[]>();
+
+  for (const [serverName, serverConfig] of Object.entries(mcpServers)) {
+    try {
+      let client: MCPClient;
+
+      if (isHttpStreamServerConfig(serverConfig)) {
+        client = new MCPClient({ transportType: "httpStream" });
+        await client.connectToServer(serverConfig);
+      } else {
+        client = new MCPClient({ transportType: "stdio" });
+        await client.connectToServer(serverConfig);
+      }
+
+      // store client and server name
+      clients.set(serverName, client);
+      serverNames.add(serverName);
+
+      // list tools for the server
+      try {
+        const { tools } = await client.client.listTools();
+        toolsPerClient.set(serverName, tools);
+      } catch (error) {
+        console.error(
+          `Failed to list tools for MCP server ${serverName}: ${error}`
+        );
+        toolsPerClient.set(serverName, []);
+      }
+    } catch (error) {
+      console.error(`Failed to connect to MCP server ${serverName}: ${error}`);
     }
   }
 
-  return null;
+  const mcpTools = Array.from(toolsPerClient.values()).flat(1);
+
+  function getClientForTool(toolName: string): MCPClient | null {
+    for (const [serverName, tools] of toolsPerClient.entries()) {
+      if (tools.some((tool) => tool.name === toolName)) {
+        return clients.get(serverName) ?? null;
+      }
+    }
+
+    return null;
+  }
+
+  return {
+    serverNames,
+    toolsPerClient,
+    clients,
+    mcpTools,
+    getClientForTool,
+  };
+}
+
+function isHttpStreamServerConfig(
+  serverConfig: z.infer<typeof configSchema>["mcpServers"][string]
+): serverConfig is z.infer<typeof httpStream_args_schema> {
+  return "url" in serverConfig && !("command" in serverConfig);
+}
+
+function isDestructiveTool(
+  toolName: string,
+  tools: ModelContextProtocolTool[]
+): boolean {
+  const tool = tools.find((tool) => tool.name === toolName);
+
+  if (!tool) {
+    return false;
+  }
+
+  return tool.annotations?.destructiveHint ?? false;
 }

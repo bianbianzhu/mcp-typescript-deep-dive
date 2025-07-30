@@ -1,4 +1,5 @@
-// npm install @langchain-anthropic
+import "dotenv/config";
+
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { ChatAnthropic } from "@langchain/anthropic";
 import { MultiServerMCPClient } from "@langchain/mcp-adapters";
@@ -27,20 +28,21 @@ const llmCompatibleTools = await multiServerMCPClient.getTools();
 
 const model = new ChatAnthropic({
   model: "claude-3-7-sonnet-latest",
+  apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-const agent = createReactAgent({
+export const agent = createReactAgent({
   llm: model,
   tools: llmCompatibleTools,
 });
 
-const result = await agent.invoke({
-  messages: [
-    {
-      role: "user",
-      content: "what is the weather in sf",
-    },
-  ],
-});
+// const result = await agent.invoke({
+//   messages: [
+//     {
+//       role: "user",
+//       content: "what is the weather in sf",
+//     },
+//   ],
+// });
 
-console.log(result.messages[result.messages.length - 1].content);
+// console.log(result.messages[result.messages.length - 1].content);

@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    },
+    "personal-mcp-server": {
+      "url": "http://localhost:8080/mcp",
+      "headers": {
+        "x-api-key": "Bearer 1234567890",
+        "x-mcp-toolsets": "calculate_bmi, get_weather, delete_file"
+      }
+    },
+    "file-system": {
+      "command": "npx",
+      "args": ["tsx", "src/mcp-servers/low-level-file-system.ts"]
+    }
+  }
+}

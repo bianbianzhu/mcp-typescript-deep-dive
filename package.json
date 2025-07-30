@@ -10,6 +10,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "jest",
+    "langgraph:in_mem:up": "npx @langchain/langgraph-cli dev --port 8888",
     "mcp:inspect": "npx fastmcp inspect src/index.ts",
     "mcp:dev": "tsx --watch src/index.ts",
     "mcp:client": "tsx src/mcp-client-L1/client.ts",

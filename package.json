@@ -22,6 +22,7 @@
     "jsonrpc:dev": "tsx --watch src/jsonrpc/jsonrpc.ts",
     "mcp:fc-host": "tsx --watch src/mcp-host/function-calling-host.ts",
     "mcp:fc-host-v2": "tsx --watch src/mcp-host/function-calling-host-v2.ts",
+    "mcp-project:start": "tsx --watch src/mcp-project/mcp-server/index.ts --transport httpstream --port 8612",
     "nuke": "rm -rf node_modules dist"
   },
   "keywords": [],
@@ -40,6 +41,7 @@
     "ajv": "^8.17.1",
     "express": "^5.1.0",
     "fastmcp": "^3.12.0",
+    "jsonwebtoken": "^9.0.2",
     "zod": "^3.25.76",
     "zod-to-json-schema": "^3.24.6"
   },
@@ -49,6 +51,7 @@
     "@tsconfig/recommended": "^1.0.10",
     "@types/express": "^5.0.3",
     "@types/jest": "^29.5.14",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.1.0",
     "@typescript-eslint/eslint-plugin": "^8.38.0",
     "@typescript-eslint/parser": "^8.38.0",
